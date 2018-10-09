@@ -17,6 +17,7 @@ package com.github.tomakehurst.wiremock.http;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.tomakehurst.wiremock.servlet.BodyChunker;
 
 public class ChunkedDribbleDelay {
 
@@ -36,5 +37,13 @@ public class ChunkedDribbleDelay {
 
     public Integer getTotalDuration() {
         return totalDuration;
+    }
+
+    public int chunkIntervalForBody(int length) {
+        return getTotalDuration() / length;
+    }
+
+    public byte[][] chunkBody(byte[] body) {
+        return BodyChunker.chunkBody(body, getNumberOfChunks());
     }
 }

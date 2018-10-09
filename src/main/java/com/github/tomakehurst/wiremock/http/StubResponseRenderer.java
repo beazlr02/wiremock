@@ -109,7 +109,7 @@ public class StubResponseRenderer implements ResponseRenderer {
 					responseDefinition.getFixedDelayMilliseconds(),
 					responseDefinition.getDelayDistribution()
 				)
-				.chunkedDribbleDelay(responseDefinition.getChunkedDribbleDelay());
+				.chunkedDribbleDelay(responseDefinition.getPreferedChunkDribbleDelay());
 
 		if (responseDefinition.specifiesBodyFile()) {
 			BinaryFile bodyFile = fileSource.getBinaryFileNamed(responseDefinition.getBodyFileName());

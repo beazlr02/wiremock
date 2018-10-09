@@ -48,6 +48,7 @@ public class ResponseDefinitionTest {
                 1112,
                 null,
                 null,
+                null,
                 "http://base.com",
                 Fault.EMPTY_RESPONSE,
                 ImmutableList.of("transformer-1"),

@@ -237,12 +237,12 @@ public class WireMockHandlerDispatchingServlet extends HttpServlet {
 				return;
 			}
 
-			byte[][] chunkedBody = BodyChunker.chunkBody(body, chunkedDribbleDelay.getNumberOfChunks());
+			byte[][] chunkedBody = chunkedDribbleDelay.chunkBody(body);
 
-			int chunkInterval = chunkedDribbleDelay.getTotalDuration() / chunkedBody.length;
+			int chunkIntervalMillis = chunkedDribbleDelay.chunkIntervalForBody(body.length);
 
 			for (byte[] bodyChunk : chunkedBody) {
-				Thread.sleep(chunkInterval);
+				Thread.sleep(chunkIntervalMillis);
 				out.write(bodyChunk);
 				out.flush();
 			}

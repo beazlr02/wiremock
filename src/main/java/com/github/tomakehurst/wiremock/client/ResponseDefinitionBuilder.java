@@ -46,6 +46,7 @@ public class ResponseDefinitionBuilder {
 	protected List<String> responseTransformerNames;
 	protected Map<String, Object> transformerParameters = newHashMap();
 	protected Boolean wasConfigured = true;
+	protected RateLimitedChunkedDribbleDelay rateLimitedChunkedDribbleDelay;
 
 	public static ResponseDefinitionBuilder like(ResponseDefinition responseDefinition) {
 		ResponseDefinitionBuilder builder = new ResponseDefinitionBuilder();
@@ -61,6 +62,7 @@ public class ResponseDefinitionBuilder {
 		builder.fixedDelayMilliseconds = responseDefinition.getFixedDelayMilliseconds();
 		builder.delayDistribution = responseDefinition.getDelayDistribution();
 		builder.chunkedDribbleDelay = responseDefinition.getChunkedDribbleDelay();
+		builder.rateLimitedChunkedDribbleDelay = responseDefinition.getRateLimitedChunkedDribbleDelay();
 		builder.proxyBaseUrl = responseDefinition.getProxyBaseUrl();
 		builder.fault = responseDefinition.getFault();
 		builder.responseTransformerNames = responseDefinition.getTransformers();
@@ -189,7 +191,12 @@ public class ResponseDefinitionBuilder {
 		return this;
 	}
 
-	public static class ProxyResponseDefinitionBuilder extends ResponseDefinitionBuilder {
+	public ResponseDefinitionBuilder withChunkedDribbleRateBytesPerSecond(final int rateKBPS) {
+		this.rateLimitedChunkedDribbleDelay = new RateLimitedChunkedDribbleDelay(rateKBPS);
+		return this;
+	}
+
+    public static class ProxyResponseDefinitionBuilder extends ResponseDefinitionBuilder {
 
 		private List<HttpHeader> additionalRequestHeaders = newArrayList();
 
@@ -248,6 +255,7 @@ public class ResponseDefinitionBuilder {
 						fixedDelayMilliseconds,
 						delayDistribution,
 						chunkedDribbleDelay,
+						rateLimitedChunkedDribbleDelay,
 						proxyBaseUrl,
 						fault,
 						responseTransformerNames,
@@ -265,6 +273,7 @@ public class ResponseDefinitionBuilder {
 						fixedDelayMilliseconds,
 						delayDistribution,
 						chunkedDribbleDelay,
+						rateLimitedChunkedDribbleDelay,
 						proxyBaseUrl,
 						fault,
 						responseTransformerNames,
@@ -272,4 +281,5 @@ public class ResponseDefinitionBuilder {
 					    wasConfigured
 				);
 	}
+
 }

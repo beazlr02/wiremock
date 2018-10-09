@@ -46,6 +46,7 @@ public class ResponseDefinition {
     private final Integer fixedDelayMilliseconds;
     private final DelayDistribution delayDistribution;
     private final ChunkedDribbleDelay chunkedDribbleDelay;
+    private final RateLimitedChunkedDribbleDelay rateLimitedChunkedDribbleDelay;
     private final String proxyBaseUrl;
     private final Fault fault;
     private final List<String> transformers;
@@ -67,12 +68,13 @@ public class ResponseDefinition {
                               @JsonProperty("fixedDelayMilliseconds") Integer fixedDelayMilliseconds,
                               @JsonProperty("delayDistribution") DelayDistribution delayDistribution,
                               @JsonProperty("chunkedDribbleDelay") ChunkedDribbleDelay chunkedDribbleDelay,
+                              @JsonProperty("rateLimitedChunkedDribbleDelay") RateLimitedChunkedDribbleDelay rateLimitedChunkedDribbleDelay,
                               @JsonProperty("proxyBaseUrl") String proxyBaseUrl,
                               @JsonProperty("fault") Fault fault,
                               @JsonProperty("transformers") List<String> transformers,
                               @JsonProperty("transformerParameters") Parameters transformerParameters,
                               @JsonProperty("fromConfiguredStub") Boolean wasConfigured) {
-        this(status, statusMessage, Body.fromOneOf(null, body, jsonBody, base64Body), bodyFileName, headers, additionalProxyRequestHeaders, fixedDelayMilliseconds, delayDistribution, chunkedDribbleDelay, proxyBaseUrl, fault, transformers, transformerParameters, wasConfigured);
+        this(status, statusMessage, Body.fromOneOf(null, body, jsonBody, base64Body), bodyFileName, headers, additionalProxyRequestHeaders, fixedDelayMilliseconds, delayDistribution, chunkedDribbleDelay, rateLimitedChunkedDribbleDelay, proxyBaseUrl, fault, transformers, transformerParameters, wasConfigured);
     }
 
     public ResponseDefinition(int status,
@@ -86,12 +88,13 @@ public class ResponseDefinition {
                               Integer fixedDelayMilliseconds,
                               DelayDistribution delayDistribution,
                               ChunkedDribbleDelay chunkedDribbleDelay,
+                              RateLimitedChunkedDribbleDelay rateLimitedChunkedDribbleDelay,
                               String proxyBaseUrl,
                               Fault fault,
                               List<String> transformers,
                               Parameters transformerParameters,
                               Boolean wasConfigured) {
-        this(status, statusMessage, Body.fromOneOf(body, null, jsonBody, base64Body), bodyFileName, headers, additionalProxyRequestHeaders, fixedDelayMilliseconds, delayDistribution, chunkedDribbleDelay, proxyBaseUrl, fault, transformers, transformerParameters, wasConfigured);
+        this(status, statusMessage, Body.fromOneOf(body, null, jsonBody, base64Body), bodyFileName, headers, additionalProxyRequestHeaders, fixedDelayMilliseconds, delayDistribution, chunkedDribbleDelay, rateLimitedChunkedDribbleDelay,proxyBaseUrl, fault, transformers, transformerParameters, wasConfigured);
     }
 
     private ResponseDefinition(int status,
@@ -103,6 +106,7 @@ public class ResponseDefinition {
                                Integer fixedDelayMilliseconds,
                                DelayDistribution delayDistribution,
                                ChunkedDribbleDelay chunkedDribbleDelay,
+                               RateLimitedChunkedDribbleDelay rateLimitedChunkedDribbleDelay,
                                String proxyBaseUrl,
                                Fault fault,
                                List<String> transformers,
@@ -119,6 +123,7 @@ public class ResponseDefinition {
         this.fixedDelayMilliseconds = fixedDelayMilliseconds;
         this.delayDistribution = delayDistribution;
         this.chunkedDribbleDelay = chunkedDribbleDelay;
+        this.rateLimitedChunkedDribbleDelay = rateLimitedChunkedDribbleDelay;
         this.proxyBaseUrl = proxyBaseUrl;
         this.fault = fault;
         this.transformers = transformers;
@@ -127,15 +132,15 @@ public class ResponseDefinition {
     }
 
     public ResponseDefinition(final int statusCode, final String bodyContent) {
-        this(statusCode, null, Body.fromString(bodyContent), null, null, null, null, null, null, null, null, Collections.<String>emptyList(), Parameters.empty(), true);
+        this(statusCode, null, Body.fromString(bodyContent), null, null, null, null, null, null, null, null, null, Collections.<String>emptyList(), Parameters.empty(), true);
     }
 
     public ResponseDefinition(final int statusCode, final byte[] bodyContent) {
-        this(statusCode, null, Body.fromBytes(bodyContent), null, null, null, null, null, null, null, null, Collections.<String>emptyList(), Parameters.empty(), true);
+        this(statusCode, null, Body.fromBytes(bodyContent), null, null, null, null, null, null, null, null, null, Collections.<String>emptyList(), Parameters.empty(), true);
     }
 
     public ResponseDefinition() {
-        this(HTTP_OK, null, Body.none(), null, null, null, null, null, null, null, null, Collections.<String>emptyList(), Parameters.empty(), true);
+        this(HTTP_OK, null, Body.none(), null, null, null, null, null,null, null, null, null, Collections.<String>emptyList(), Parameters.empty(), true);
     }
 
     public static ResponseDefinition notFound() {
@@ -210,6 +215,7 @@ public class ResponseDefinition {
             original.fixedDelayMilliseconds,
             original.delayDistribution,
             original.chunkedDribbleDelay,
+            original.rateLimitedChunkedDribbleDelay,
             original.proxyBaseUrl,
             original.fault,
             original.transformers,
@@ -275,6 +281,15 @@ public class ResponseDefinition {
 
     public ChunkedDribbleDelay getChunkedDribbleDelay() {
         return chunkedDribbleDelay;
+    }
+
+    public RateLimitedChunkedDribbleDelay getRateLimitedChunkedDribbleDelay() {
+        return rateLimitedChunkedDribbleDelay;
+    }
+
+    @JsonIgnore
+    public ChunkedDribbleDelay getPreferedChunkDribbleDelay() {
+        return rateLimitedChunkedDribbleDelay !=null ? rateLimitedChunkedDribbleDelay : chunkedDribbleDelay;
     }
 
     @JsonIgnore
